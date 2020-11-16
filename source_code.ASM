@@ -1,35 +1,27 @@
-; ----------------------------------------------------------------------------
-; -       TITULO  : Ejemplo de botones en Windows W-FASM                     -
-; -----                                                                  -----
-; -       AUTOR   : Alfonso Víctor Caballero Hurtado                         -
-; -----                                                                  -----
-; -       VERSION : 1.0                                                      -
-; -----                                                                  -----
-; -      (c) 2010. Abre los Ojos al Ensamblador                              -
-; ----------------------------------------------------------------------------
-
-; Todas las palabras reservadas deben estar en minúsculas
+; PROYECTO 2 ENSAMBLADOR 2048.
+; AUTORES:
+; JESÚS ALONSO MORENO MONTERO — B95346
 
 format PE GUI 4.0
 entry start
 
-include 'C:\Ensambla_TP2\win32a.inc'         ; Incluímos definiciones de estructuras y constantes
+include 'C:\Ensambla_TP2\win32a.inc'
 
-cdXPos           EQU  300     ; Constante double X-Posición de la ventana(esq sup izqda)
-cdYPos           EQU  50      ; Constante double Y-Posición de la ventana(esq sup izqda)
+cdXPos           EQU  300
+cdYPos           EQU  50
 windowWidth      EQU  720     ; Constante double X-tamaño de la ventana
 windowHeight     EQU  770     ; Constante double Y-tamaño de la ventana
 
-cdColFondo       EQU  COLOR_BTNFACE + 1  ; Color de fondo de la ventana: gris de un botón de comando
-cdVIcono         EQU  IDI_APPLICATION ; Icono de la ventana, véase Resource.H
-cdVCursor        EQU  IDC_ARROW   ; Cursor para la ventana
+cdColFondo       EQU  COLOR_BTNFACE + 1
+cdVIcono         EQU  IDI_APPLICATION
+cdVCursor        EQU  IDC_ARROW
 
-cdVBarTipo       EQU  NULL                 ; Normal, con icono
-cdVBtnTipo       EQU  WS_GROUP+WS_SYSMENU+WS_VISIBLE ; Todos los botones visibles, sólo activos minimizar y cerrar
+cdVBarTipo       EQU  NULL
+cdVBtnTipo       EQU  WS_GROUP+WS_SYSMENU+WS_VISIBLE
 cdID_OBJETO      EQU  500
 
 FLOODFILLSURFACE equ  1
-; Constantes del resource
+
 cdimagen_0    EQU  200
 cdimagen_2    EQU  201
 cdimagen_4    EQU  202
@@ -44,15 +36,11 @@ cdimagen_1024   EQU  210
 cdimagen_2048   EQU  211
 
 
-;cdJUDGE_BMP      EQU  203
-;cdBOX_GLOBE_CUR  EQU  204
 cdIDC_BUTTON     EQU  3000
 cdIDC_UDC1       equ  1003
 cdIDC_EDT1       equ  1002
 cdIDC_STC7       equ  1008
 cdIDC_STC8       equ  1009
-;ABOUTCOLOR       equ  00FF8080h
-;cdIdDialogo      EQU  37    ; El Id de la ventana modal (dialogo)
 
 ; Otros
 GMEM_FIXED       EQU  0h
@@ -94,19 +82,10 @@ section '.text' code readable executable
     mov       [wc.hInstance],eax
     invoke    GetCommandLine
     mov       [CommandLine], EAX
-    ;stdcall   InitHyperLinkClass
-    ;invoke    CreateFontIndirect, Arial_Black_10
-    ;mov       [hFont10], eax
-    ;invoke    InitCommonControls
     stdcall   WinMain, [wc.hInstance], NULL, [CommandLine], SW_SHOWDEFAULT
-    ;invoke    DeleteObject, [hFont10]
     invoke    ExitProcess,[msg.wParam]
 
 proc WinMain uses ebx esi edi, hInst, hPrevInst, CmdLine, CmdShow
-    ;  Propósito: Inicializamos la ventana principal de la aplicación y captura errores, si los hubiere
-    ;  Entrada  : hInst, hPrevInst, CmdLine, CmdShow
-    ;  Salida   : Ninguna
-    ;  Destruye : Ninguna
 
     invoke    RegisterClass,wc
     test      eax,eax
@@ -136,11 +115,6 @@ proc WinMain uses ebx esi edi, hInst, hPrevInst, CmdLine, CmdShow
 endp
 
 proc WndProc uses ebx esi edi, hwnd,wmsg,wparam,lparam
-    ;  Propósito: Procesa los mensajes provenientes de las ventanas
-    ;  Entrada  : hwnd,wmsg,wparam,lparam
-    ;  Salida   : Ninguna
-    ;  Destruye : Ninguna
-    ;  Si usáramos WM_PAINT, al menos aquí habría que redireccionar a wmDefault para que funcione
 
     mov       eax, [wmsg]
     cmp       eax, WM_DESTROY
@@ -195,8 +169,6 @@ proc WndProc uses ebx esi edi, hwnd,wmsg,wparam,lparam
         stdcall     PlaceRandom
         stdcall     PlaceRandom                
         stdcall     DrawBoard
-        ;stdcall     CheckWin
-        ;stdcall     CheckLose
         jmp         wmDefault
       
       .btn_up:
@@ -443,11 +415,6 @@ proc WndProc uses ebx esi edi, hwnd,wmsg,wparam,lparam
 endp
 
 proc  CreaObjetos uses ecx esi, uWnd
-  ;  Propósito: Crea los objetos en la ventana
-  ;  Entrada  : Ninguna
-  ;  Salida   : Ninguna
-  ;  Destruye : Ninguna
-  ; Creamos los contenedores
   mov       esi, 0
   mov       ecx, 1           ; Contador de objetos
   L_Crea_Objetos_Agrupadores:
@@ -915,7 +882,7 @@ endp
 
 proc    GetRandom uses esi edx
 ; gets a random value from 0 to 8
-; return the random on edx
+; leaves the randomNum stored in varible randomNum.
         push    esi
         rdtsc
         cdq
@@ -933,7 +900,6 @@ endp
 
 proc    PlaceRandom uses ecx edx ebx
     push ecx edx ebx
-    ;mov [bool_continue], dword 0
     mov ecx, dword 0
     cmp [bool_validmove], 0
     je  .finish_random_placing
@@ -960,10 +926,6 @@ proc    PlaceRandom uses ecx edx ebx
     ret
 endp
 
- 
-
-
-
 section '.bss' data readable writeable
   hInstance       DD  ?
   hFont10         DD  ?
@@ -977,7 +939,6 @@ section '.bss' data readable writeable
   hlc_pt          POINT
   hlc_text        rb 2048
   hlc_pSubject    rd  1
-;  LOCAL   hlc_wcx:WNDCLASSEX
   hlc_wcx         WNDCLASSEX
 
   CommandLine      rd 1
@@ -1019,17 +980,17 @@ section '.data' data readable writeable
   TituloVentana      TCHAR    '2048 GAME',0
   MsgError         TCHAR    'Carga inicial fallida.',0
   wc               WNDCLASS 0,WndProc,0,0,NULL,NULL,NULL,cdColFondo,NULL,NombreClase
-  MsgGpbBmp        db "Board",0
-  btn_up_message     db "UP", 0
-  btn_left_message     db "LEFT", 0
+  MsgGpbBmp             db "Board",0
+  btn_up_message        db "UP", 0
+  btn_left_message      db "LEFT", 0
   btn_right_message     db "RIGHT", 0
-  btn_down_message     db "DOWN", 0
+  btn_down_message      db "DOWN", 0
   
-  txtTitle        db      'Congratulations!',0
-  txtMessage      db      'You win!',0
+  txtTitle              db      'Congratulations!',0
+  txtMessage            db      'You win!',0
   
-  txtTitleSad        db      'Almost there!',0
-  txtMessageSad      db      'You lost!',0
+  txtTitleSad           db      'Almost there!',0
+  txtMessageSad         db      'You lost!',0
   
   randomNum       dd    0
   
@@ -1053,14 +1014,9 @@ section '.data' data readable writeable
   ClaseEdit        db "EDIT", 0
   vbButActiv       db 1 ; -1:true, 0:false (active/inactive), en principio está activado
 
-
-  ; Aquí empieza la matriz de objetos a pintar en el formulario, 2 grupos
-  ; El primer grupo tiene como padre la ventana del programa
   gpbBmp    DatosControl ClaseBoton, MsgGpbBmp,\
             WS_CHILD + WS_VISIBLE + BS_GROUPBOX, 40, 5, windowWidth-95, windowHeight-50, cdID_OBJETO,NULL
-  ; El segundo grupo (dividido en dos) tiene como padre al agrupador bmp
-  ; Obsérvese que sus posiciones son relativas a las posiciones de sus agrupadores (contenedores)
-  ; Aqui WS_TABSTOP no tiene efecto, se usa en el resource
+
    btn_0_0 DatosControl ClaseBoton, "",\
             WS_CHILD + WS_VISIBLE + BS_BITMAP + WS_TABSTOP, 10, 20, 150, 150, cdID_OBJETO+2,NULL
    btn_0_1 DatosControl ClaseBoton, "",\
@@ -1116,9 +1072,6 @@ section '.data' data readable writeable
             
    btn_start  DatosControl ClaseBoton, btn_start_message,\
             WS_CHILD + WS_VISIBLE + BS_DEFPUSHBUTTON + WS_TABSTOP, 50, 660, 90, 30, cdID_OBJETO+22,NULL
-
-
-
 
 section '.idata' import data readable writeable
   library kernel32,'KERNEL32.DLL',\ 
